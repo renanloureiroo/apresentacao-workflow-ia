@@ -1,0 +1,1 @@
+Adiciona um painel de cotações de moedas no app: dólar, euro e bitcoin em reais, com a variação do dia. Usa a AwesomeAPI (https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL), que é gratuita e não precisa de chave. Quero um botão de atualizar, tratamento de erro e um visual consistente com o resto do app.
