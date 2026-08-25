@@ -1,11 +1,12 @@
-# Demo — Painel de Cotações, 3 execuções ao vivo
+# Demo — Painel de Clima, 3 execuções ao vivo
 
 A mesma feature, três processos: prompt cru → modo plan → r-spec.
 Encena ao vivo a régua L1 → L2 → L3 da talk.
 
-**Feature:** painel de cotações de moedas (USD, EUR, BTC → BRL) na aplicação
-existente, via **AwesomeAPI** (`https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL`)
-— gratuita, sem chave.
+**Feature:** painel de clima com cidades favoritas na aplicação existente —
+buscar cidade, favoritar, ver temperatura atual + previsão de 5 dias, alternar
+°C/°F — via **Open-Meteo** (geocoding: `https://geocoding-api.open-meteo.com/v1/search?name=`
+· forecast: `https://api.open-meteo.com/v1/forecast`) — gratuita, sem chave.
 
 **Base:** aplicação **zerada** (React + Vite + Tailwind no front, Express + TS
 no back, Vitest configurado, `GET /health`, `DESIGN.md`) — sem nenhuma feature
@@ -32,15 +33,17 @@ Instalar dependências e conferir que o app sobe em cada pasta:
 Abrir o harness em `01-prompt/` e mandar um prompt decente — o que um bom
 dev escreveria num chat, sem processo:
 
-> Adiciona um painel de cotações de moedas no app: dólar, euro e bitcoin
-> em reais, com a variação do dia. Usa a AwesomeAPI
-> (https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL),
-> que é gratuita e não precisa de chave. Quero um botão de atualizar,
-> tratamento de erro e um visual consistente com o resto do app.
+> Adiciona um painel de clima no app: buscar cidade, adicionar aos favoritos,
+> mostrar temperatura atual e previsão dos próximos 5 dias, com opção de
+> trocar entre Celsius e Fahrenheit. Usa a Open-Meteo (https://open-meteo.com),
+> que é gratuita e não precisa de chave — tem endpoint de geocoding pra busca
+> de cidade e de forecast pro clima. Quero poder remover favoritos, tratamento
+> de erro, e um visual consistente com o resto do app.
 
 **O que observar com a plateia (narrar durante):**
 - O prompt é bom — e mesmo assim: quem decidiu se o frontend chama a API
-  direto ou via backend? Formatação pt-BR? O que ficou fora do escopo?
+  direto ou via backend? Os favoritos persistem entre reloads ou somem?
+  O que fazer quando a busca retorna várias cidades com o mesmo nome?
 - Seguiu o DESIGN.md e os padrões do projeto (kebab-case, sem `any`, logging)?
 - Escreveu testes? Que estados de erro cobriu?
 
@@ -54,9 +57,10 @@ Abrir o harness em `02-plan/`, ativar o plan mode e mandar o MESMO prompt
 da rodada 1. Aprovar o plano e deixar executar.
 
 **O que observar:** o plano melhora a estrutura (etapas, arquivos), mas as
-decisões continuam do modelo, não suas — API escolhida por ele, contrato
-implícito, convenções do projeto ainda invisíveis, verificação fraca.
-E o plano morre com a sessão: não vira artefato versionado.
+decisões continuam do modelo, não suas — orquestração geocoding→forecast
+decidida por ele, persistência dos favoritos implícita, convenções do
+projeto ainda invisíveis, verificação fraca. E o plano morre com a sessão:
+não vira artefato versionado.
 
 ## Rodada 3 — r-spec (~20 min)
 
@@ -65,23 +69,31 @@ Abrir o harness em `03-sdd/`. Mostrar antes: `AGENTS.md`, `.claude/skills/`
 
 **Fase 1 — create-prd:**
 
-> Use a skill create-prd para a feature "painel de cotações de moedas".
+> Use a skill create-prd para a feature "painel de clima com cidades
+> favoritas".
 >
 > Requisitos base:
-> - Exibir a cotação atual de USD, EUR e BTC em BRL, com a variação
->   percentual do dia de cada moeda (alta em verde, queda em vermelho).
-> - Fonte de dados: AwesomeAPI, gratuita e sem chave:
->   https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL
-> - A API externa deve ser consumida exclusivamente pelo backend
->   (o frontend nunca chama a AwesomeAPI diretamente).
-> - Botão "Atualizar" que rebusca as cotações, exibindo o horário da
->   última atualização (ex.: "atualizado às 14h32").
+> - Campo de busca de cidade por nome, usando o geocoding da Open-Meteo:
+>   https://geocoding-api.open-meteo.com/v1/search?name=
+> - Se a busca retornar mais de uma cidade com o mesmo nome (país/estado
+>   diferentes), o usuário escolhe qual delas antes de favoritar.
+> - Adicionar a cidade escolhida a uma lista de favoritos.
+> - Cada favorito exibe: nome da cidade, temperatura atual, condição
+>   (código do tempo da Open-Meteo) e mín/máx do dia.
+> - Clicar num favorito expande a previsão dos próximos 5 dias (mín/máx
+>   e condição por dia).
+> - Fonte da previsão: forecast da Open-Meteo, gratuita e sem chave:
+>   https://api.open-meteo.com/v1/forecast
+> - Alternar entre Celsius e Fahrenheit, aplicando a TODOS os valores de
+>   temperatura exibidos na tela.
+> - Remover um favorito da lista.
+> - A Open-Meteo (geocoding e forecast) deve ser consumida exclusivamente
+>   pelo backend (o frontend nunca chama a Open-Meteo diretamente).
 > - Estados de carregamento e de erro com mensagem clara em pt-BR e
 >   opção de "tentar novamente".
-> - Valores formatados em pt-BR (R$ 5,43 · R$ 6,12 · R$ 512.340,00).
 > - UI seguindo o DESIGN.md do projeto, responsiva.
-> - Fora do escopo desta versão: seleção de outras moedas, histórico,
->   gráficos, atualização automática e persistência.
+> - Fora do escopo desta versão: alertas climáticos, gráficos históricos,
+>   múltiplas listas de favoritos, notificações e i18n além do pt-BR.
 
 Revisar o `prd.md` gerado COM a plateia (o ponto da talk: artefato auditável).
 
@@ -103,7 +115,7 @@ nunca acelerar tudo, cortar o meio).
 - Artefatos prontos do exemplo `01-painel-clima` no repo do r-spec — os mesmos
   mostrados na talk.
 - Rodada 1/2 travou? Congelar a tela, narrar o que aconteceria, seguir pra 3.
-- AwesomeAPI fora do ar? Testar com `curl` antes; se cair na hora, pedir no
+- Open-Meteo fora do ar? Testar com `curl` antes; se cair na hora, pedir no
   prompt pra usar uma fixture local com o payload da API.
 
 ## Comparação final (fechar a demo)

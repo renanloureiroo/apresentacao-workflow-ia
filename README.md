@@ -27,7 +27,7 @@ gancho pro r-spec.
 
 ## A demo (sessão separada)
 
-A mesma feature — **painel de cotações USD/EUR/BTC → BRL** (AwesomeAPI,
+A mesma feature — **painel de clima com cidades favoritas** (Open-Meteo,
 gratuita, sem chave) — executada três vezes ao vivo, uma em cada base:
 
 | Rodada        | Base         | O que mostra                                              |
