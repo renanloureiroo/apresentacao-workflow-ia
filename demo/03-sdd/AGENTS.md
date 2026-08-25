@@ -64,13 +64,14 @@ Consulte o `SKILL.md` da skill em `.claude/skills/<nome>/` (ou `.agents/skills/<
 
 | Skill                     | Acionar para…                                                                                  | Não usar se…                       |
 | ------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `backend-architecture`    | Estrutura de pastas do backend (módulos em `backend/src/modules/`), camadas routes/controller/service, validação Zod, erros centralizados — **skill própria do projeto, aciona primeiro para qualquer código novo em `backend/`** | Tarefa só frontend                 |
 | `express-rest-api`        | Rotas Express, middleware, validação, status/erro HTTP em APIs REST                            | Tarefa só frontend                 |
 | `nodejs-backend-patterns` | Arquitetura de serviço Node: middleware, tratamento de erro, auth, integração com DB, API design | Tarefa só frontend                 |
 | `react-frontend-expert`   | Componentes/hooks React+TS, páginas, data fetching (TanStack Query), forms, routing, a11y      | Tarefa só backend; testes (não cobre) |
 
 **Ordem sugerida por tarefa:**
 
-- **Backend HTTP:** `express-rest-api` → `nodejs-backend-patterns`
+- **Backend HTTP:** `backend-architecture` → `express-rest-api` → `nodejs-backend-patterns`
 - **Frontend:** `react-frontend-expert` (+ siga o `DESIGN.md` para UI)
 
 ## Subagents de review (Claude Code)
@@ -80,7 +81,7 @@ Subagents em `.claude/agents/` revisam uma task em **contexto isolado** (sem o v
 | Subagent | Use para… |
 | -------- | --------- |
 | `frontend-reviewer` | Tasks de **frontend** (`frontend/`) — carrega `react-frontend-expert` e o `DESIGN.md`. |
-| `backend-reviewer` | Tasks de **backend** (`backend/`) — carrega `express-rest-api` / `nodejs-backend-patterns`. |
+| `backend-reviewer` | Tasks de **backend** (`backend/`) — carrega `backend-architecture` / `express-rest-api` / `nodejs-backend-patterns`. |
 | `task-reviewer` | Review genérico, quando a task não se encaixa claramente em uma camada. |
 
 > Task que cruza as duas camadas: rode `frontend-reviewer` e `backend-reviewer`.
