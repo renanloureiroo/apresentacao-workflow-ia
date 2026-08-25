@@ -8,15 +8,15 @@ existente, via **AwesomeAPI** (`https://economia.awesomeapi.com.br/json/last/USD
 — gratuita, sem chave.
 
 **Base:** aplicação **zerada** (React + Vite + Tailwind no front, Express + TS
-no back, Vitest + Playwright configurados, `GET /health`, `DESIGN.md`) — sem
-nenhuma feature implementada. As 3 pastas partem do mesmo código; diferem só
-no que o agente enxerga:
+no back, Vitest configurado, `GET /health`, `DESIGN.md`) — sem nenhuma feature
+implementada. Só `03-sdd/` traz Playwright (E2E); `01-prompt/` e `02-plan/`
+não. As 3 pastas partem do mesmo código; diferem só no que o agente enxerga:
 
 | Pasta | Setup | Rodada |
 |---|---|---|
 | `01-prompt/` | Sem NENHUMA config de agente | Prompt cru |
 | `02-plan/` | Sem config; usar o plan mode do harness | Plano aprovado |
-| `03-rspec/` | AGENTS.md + skills (versão atual do r-spec) + subagents + `tasks/` vazio | Pipeline r-spec |
+| `03-sdd/` | AGENTS.md + skills (versão atual do r-spec) + subagents + `tasks/` vazio | Pipeline r-spec |
 
 ---
 
@@ -60,7 +60,7 @@ E o plano morre com a sessão: não vira artefato versionado.
 
 ## Rodada 3 — r-spec (~20 min)
 
-Abrir o harness em `03-rspec/`. Mostrar antes: `AGENTS.md`, `.claude/skills/`
+Abrir o harness em `03-sdd/`. Mostrar antes: `AGENTS.md`, `.claude/skills/`
 (processo + convenções) e `tasks/` vazio — a feature vira `tasks/01-...`.
 
 **Fase 1 — create-prd:**
